@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 1m
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: 'prometheus-label'
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: '{{EC2_HOSTNAME}}'
+
+remote_write:
+  - url: '{{GRAFANA_ENDPOINT}}'
+    basic_auth:
+      username: '{{GRAFANA_USER}}'
+      password: '{{GRAFANA_PASSWORD}}'
