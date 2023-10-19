@@ -49,9 +49,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Change directory
-        run: cd ./terraform
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -59,11 +56,11 @@ jobs:
 
       - name: Prepare backend file
         run: |
-          sed "s/{{TF_CLOUD_ORGANIZATION}}/${TF_CLOUD_ORGANIZATION}/" ./backend.tf
-          sed "s/{{TF_WORKSPACE}}/${TF_WORKSPACE}/" ./backend.tf
+          sed "s/{{TF_CLOUD_ORGANIZATION}}/${TF_CLOUD_ORGANIZATION}/" ./terraform/backend.tf
+          sed "s/{{TF_WORKSPACE}}/${TF_WORKSPACE}/" ./terraform/backend.tf
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Deploy
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
