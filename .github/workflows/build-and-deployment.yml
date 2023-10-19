@@ -1,13 +1,39 @@
-name: terraform-deployment
+name: Packer build and Terraform deployment
 
-# Trigger terraform-deployment workflow after packer-build workflow completes.
 on:
-  workflow_run:
-    workflows: ["packer-build"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
+  packer-build:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        id: checkout-code
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@main
+        id: packer-setup
+
+      - name: Run 'packer init'
+        id: packer-init
+        run: "packer init ./packer/monitored-ami.pkr.hcl"
+
+      - name: Run 'packer validate'
+        id: packer-validate
+        run: "packer validate ./packer/monitored-ami.pkr.hcl"
+
+      - name: Run 'packer build'
+        id: packer-build
+        run: "packer build ./packer/monitored-ami.pkr.hcl"
+
   terraform-deployment:
     runs-on: ubuntu-latest
 
