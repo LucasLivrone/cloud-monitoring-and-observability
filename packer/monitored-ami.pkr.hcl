@@ -24,18 +24,18 @@ build {
 
   # Install Docker & Docker-Compose
   provisioner "shell" {
-    script = "../scripts/docker_setup.sh"
+    script = "./scripts/docker_setup.sh"
   }
 
   # Load docker-compose.yml
   provisioner "file" {
-    source      = "../docker/docker-compose.yml"
+    source      = "./docker/docker-compose.yml"
     destination = "/home/ec2-user/docker-compose.yml"
   }
 
   # Load docker-compose.yml
   provisioner "file" {
-    source      = "../docker/prometheus.yml"
+    source      = "./docker/prometheus.yml"
     destination = "/home/ec2-user/prometheus.yml"
   }
 }
