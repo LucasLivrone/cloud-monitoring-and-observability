@@ -54,13 +54,11 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
-      - name: Prepare backend file
-        run: |
-          sed "s/{{TF_CLOUD_ORGANIZATION}}/${TF_CLOUD_ORGANIZATION}/" ./terraform/backend.tf
-          sed "s/{{TF_WORKSPACE}}/${TF_WORKSPACE}/" ./terraform/backend.tf
-
       - name: Terraform Deploy
         run: |
           cd terraform
+          sed "s/{{TF_CLOUD_ORGANIZATION}}/${TF_CLOUD_ORGANIZATION}/" ./backend.tf
+          sed "s/{{TF_WORKSPACE}}/${TF_WORKSPACE}/" ./backend.tf
+          cat ./backend.tf
           terraform init
           terraform apply -auto-approve
