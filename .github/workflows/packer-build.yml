@@ -35,7 +35,7 @@ jobs:
         run: "packer build ./packer/monitored-ami.pkr.hcl"
 
   # Trigger terraform-deployment workflow after packer-build workflow completes.
-  trigger-deployment:
+  trigger-terraform-deployment:
     runs-on: ubuntu-latest
     needs: packer-build
     steps:
