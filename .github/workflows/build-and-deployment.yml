@@ -57,6 +57,5 @@ jobs:
       - name: Terraform Deploy
         run: |
           cd terraform
-          terraform login
           terraform init
           terraform apply -auto-approve
