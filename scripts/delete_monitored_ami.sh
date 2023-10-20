@@ -8,7 +8,7 @@ ami_id=$(aws ec2 describe-images --filters "Name=name,Values=${ami_name}" --quer
 if [[ $ami_id == ami-* ]]; then
   # Deregister the AMI using the retrieved AMI ID
   if aws ec2 deregister-image --image-id $ami_id; then
-    echo "AMI deleted"
+    echo "Pre-existing AMI $ami_id deleted"
   else
     echo "Failed to delete AMI with ID: $ami_id"
   fi

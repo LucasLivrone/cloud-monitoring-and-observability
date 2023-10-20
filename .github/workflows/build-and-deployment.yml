@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  packer-build:
+  delete-pre-existing-ami:
     runs-on: ubuntu-latest
 
     env:
@@ -17,10 +17,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Remove pre-existing AMI if applicable
         run: |
           chmod +x ./scripts/delete_monitored_ami.sh
           ./scripts/delete_monitored_ami.sh
+    
+
+  packer-build:
+    runs-on: ubuntu-latest
+    needs: delete-pre-existing-ami
+
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
