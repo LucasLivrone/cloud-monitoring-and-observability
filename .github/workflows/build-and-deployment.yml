@@ -18,7 +18,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Remove pre-existing AMI if applicable
-        run: "./scripts/delete_monitored_ami.sh"
+        run: |
+          chmod +x ./scripts/delete_monitored_ami.sh
+          ./scripts/delete_monitored_ami.sh
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
