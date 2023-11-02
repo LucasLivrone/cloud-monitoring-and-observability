@@ -139,6 +139,20 @@ As the deployment process is automated by GitHub Actions, it's required that you
 
 ## Build and Provisioning
 
+
+| Terraform Configuration File | Description                                                                                                                                                                                                                                                             |
+|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ``ami.tf``                   | Looks for the AMI ID created by Packer to be used when provisioning EC2 instances.                                                                                                                                                                                      |
+| ``backend.tf``               | Specifies the use of Terraform Cloud backend to store the Terraform state file and state lock information. During ``terraform init`` it will use the following env variables to specify the details of the backend: TF_API_TOKEN - TF_CLOUD_ORGANIZATION - TF_WORKSPACE |
+| ``ec2.tf``                   | Provisions 2 instances using the Golden AMI created by Packer. The user_data script will use GRAFANA-SECRETS to update the Prometheus config file.                                                                                                                      |
+| ``iam.tf``                   | Creates an EC2 role and attaches a policy to allow read of only the GRAFANA-SECRETS                                                                                                                                                                                     |
+| ``providers.tf``             | Specifies the required Terraform provider and its version. It defines the configuration for the AWS provider, specifying the AWS region.                                                                                                                                |
+| ``secrets.tf``               | Creates the GRAFANA-SECRETS in the AWS Secrets Manager                                                                                                                                                                                                                  |
+| ``security-group.tf``        | Enables ingress ports for Prometheus, Grafana, Node Exporter and HTTP                                                                                                                                                                                                   |
+| ``variables.tf``             | Defines various input variables for the Terraform configuration, including the AWS region, AMI name and owner, and Grafana Secrets                                                                                                                                      |
+| ``versions.tf``              | Specifies the required Terraform version for the project.                                                                                                                                                                                                               |
+
+
 In order to trigger GitHub Actions CI/CD workflow you only need to create a commit and push it to the GitHub repository.
 
 ![build-and-deployment](img/build-and-deployment.png)
@@ -185,6 +199,8 @@ And also check that Datadog is monitoring the instances as well:
 
 #### Destroy Terraform infrastructure
 * In order to destroy the resources created by the ``build-and-deployment.yml`` workflow you can replace the ``terraform apply`` for ``terraform destroy`` in the file, commit and push the changes to re-trigger the workflow.
+* Another alternative is to manually destroy using the **Terraform Cloud console > Workspace Settings > Queue Destroy Plan**
+  * Keep in mind that you will need to provide the variables that were initially provided by GitHub Actions, otherwise it will fail. I had to add **grafana_endpoint**, **grafana_user** and **grafana_password** in order to make it work. 
 
 #### Remove Packer build
 * You can only delete the Packer AMI with the AWS Console or by running the ``delete_monitored_ami.sh`` script.
