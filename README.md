@@ -183,4 +183,18 @@ And also check that Datadog is monitoring the instances as well:
 
 ## Destroy
 
+#### Destroy Terraform infrastructure
+* In order to destroy the resources created by the ``build-and-deployment.yml`` workflow you can replace the ``terraform apply`` for ``terraform destroy`` in the file, commit and push the changes to re-trigger the workflow.
+
+#### Remove Packer build
+* You can only delete the Packer AMI with the AWS Console or by running the ``delete_monitored_ami.sh`` script.
+
+#### Remove Datadog integration
+* To remove the Datadog integration you need to remove your AWS account monitoring at **Datadog > Integrations > AWS > Remove Account**
+* To remove AWS resources created during the Datadog integration, do the following:
+  1. Navigate to the AWS CloudFormation console and choose the Stacks page. 
+  2. Select the CloudFormation stack for Datadog’s AWS Integration that you want to delete in the child AWS account.
+  3. In the Stack Details pane, choose Delete.
+  4. When prompted, select Delete stack.
+
 ---
